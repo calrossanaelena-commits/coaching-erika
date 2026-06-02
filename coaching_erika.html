@@ -1,0 +1,1468 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Percorso di sviluppo — Erika</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --navy: #1B3A6B;
+  --navy-mid: #2E5FA3;
+  --blue: #2E5FA3;
+  --blue-light: #E8EFF8;
+  --gold: #2E5FA3;
+  --gold-light: #E8EFF8;
+  --gold-mid: #7fb3e8;
+  --text: #1B3A6B;
+  --text-muted: #4a6490;
+  --text-light: #7A90B8;
+  --bg: #F4F7FB;
+  --bg-card: #ffffff;
+  --border: rgba(27,58,107,0.08);
+  --border-strong: rgba(27,58,107,0.16);
+  --radius: 12px;
+  --radius-sm: 8px;
+  --shadow: 0 1px 3px rgba(27,58,107,0.07), 0 4px 12px rgba(27,58,107,0.05);
+  --shadow-lg: 0 8px 32px rgba(27,58,107,0.13);
+}
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  font-size: 15px;
+  line-height: 1.6;
+  min-height: 100vh;
+}
+
+.edit-mode-bar {
+  background: #2E5FA3;
+  color: rgba(255,255,255,0.75);
+  font-size: 12px;
+  text-align: center;
+  padding: 5px 1rem;
+  letter-spacing: 0.02em;
+}
+.edit-mode-bar a { color: rgba(255,255,255,0.65); text-decoration: underline; cursor: pointer; }
+
+.header {
+  background: var(--navy);
+  padding: 0;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: var(--shadow-lg);
+}
+.header-inner {
+  max-width: none;
+  margin: 0;
+  padding: 0.875rem 1.5rem 0.875rem 1.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+.header-title {
+  font-family: 'DM Serif Display', serif;
+  font-size: 19px;
+  color: #fff;
+  letter-spacing: -0.01em;
+}
+.header-sub { font-size: 11px; color: rgba(255,255,255,0.42); margin-top: 1px; font-weight: 300; }
+.period-badge {
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.15);
+  color: rgba(255,255,255,0.8);
+  font-size: 11px;
+  padding: 4px 12px;
+  border-radius: 20px;
+}
+.month-badge { background: var(--navy-mid); color: #fff; font-size: 11px; font-weight: 500; padding: 5px 14px; border-radius: 20px; }
+
+.main { max-width: 900px; margin: 0 auto; padding: 1.75rem 2rem 4rem; }
+
+.tabs {
+  display: flex;
+  gap: 2px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 4px;
+  margin-bottom: 1.5rem;
+  overflow-x: auto;
+  box-shadow: var(--shadow);
+  scrollbar-width: none;
+}
+.tabs::-webkit-scrollbar { display: none; }
+.tab {
+  flex: 1;
+  min-width: max-content;
+  font-size: 13px;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 400;
+  color: var(--text-muted);
+  padding: 8px 14px;
+  cursor: pointer;
+  border: none;
+  background: none;
+  border-radius: var(--radius-sm);
+  transition: all 0.15s;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+}
+.tab i { font-size: 13px; }
+.tab:hover:not(.active) { color: var(--text); background: var(--bg); }
+.tab.active { background: var(--navy); color: #fff; font-weight: 500; }
+
+.panel { display: none; }
+.panel.active { display: block; }
+
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 1rem;
+  box-shadow: var(--shadow);
+}
+.card-label {
+  font-size: 10px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--gold);
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.card-label i { font-size: 12px; }
+
+.role-badge {
+  font-size: 10px;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-bottom: 10px;
+}
+.role-coach { background: #E8EFF8; color: #1B3A6B; }
+.role-erika { background: #dce8f5; color: #2E5FA3; }
+
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+.grid3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+
+.field-label { font-size: 12px; font-weight: 500; color: var(--text-muted); margin-bottom: 5px; display: block; }
+.field-group { margin-bottom: 0.875rem; }
+
+.editable-field {
+  width: 100%;
+  font-size: 14px;
+  font-family: 'DM Sans', sans-serif;
+  color: var(--text);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 9px 12px;
+  resize: vertical;
+  min-height: 72px;
+  line-height: 1.6;
+  transition: border-color 0.15s;
+}
+.editable-field:focus { outline: none; border-color: var(--blue); }
+.editable-field.single { min-height: unset; resize: none; height: 40px; }
+
+.save-btn {
+  font-size: 13px;
+  font-family: 'DM Sans', sans-serif;
+  padding: 7px 18px;
+  background: var(--navy);
+  color: white;
+  border: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: opacity 0.15s;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 8px;
+}
+.save-btn:hover { opacity: 0.85; }
+.save-ok { font-size: 12px; color: #d4edbc; margin-left: 4px; display: none; }
+
+.timeline-wrap { padding: 0.5rem 0 1rem; overflow-x: auto; scrollbar-width: none; }
+.timeline-wrap::-webkit-scrollbar { display: none; }
+.timeline { display: flex; align-items: flex-start; min-width: 500px; position: relative; }
+.tl-connector { flex: 1; height: 2px; background: var(--border-strong); margin-top: 19px; }
+.tl-connector.done { background: var(--blue); }
+.tl-step { display: flex; flex-direction: column; align-items: center; flex-shrink: 0; }
+.tl-dot {
+  width: 38px; height: 38px;
+  border-radius: 50%;
+  border: 2px solid var(--border-strong);
+  background: var(--bg-card);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 500;
+  color: var(--text-muted);
+  transition: all 0.2s;
+  cursor: default;
+}
+.tl-step.done .tl-dot { background: var(--navy); border-color: var(--navy); color: #fff; }
+.tl-step.current .tl-dot { background: var(--gold); border-color: var(--gold); color: #fff; box-shadow: 0 0 0 4px rgba(186,117,23,0.18); }
+.tl-info { text-align: center; margin-top: 8px; width: 88px; }
+.tl-month { font-size: 12px; font-weight: 500; color: var(--text-muted); }
+.tl-step.done .tl-month { color: var(--blue); }
+.tl-step.current .tl-month { color: var(--gold); }
+.tl-focus { font-size: 11px; color: var(--text-light); margin-top: 2px; line-height: 1.3; }
+.tl-step.current .tl-focus { color: rgba(186,117,23,0.8); }
+
+.session-row { display: flex; align-items: center; gap: 10px; padding: 9px 0; border-bottom: 1px solid var(--border); }
+.session-row:last-child { border-bottom: none; }
+.session-check {
+  width: 18px; height: 18px;
+  border-radius: 4px;
+  border: 1.5px solid var(--border-strong);
+  flex-shrink: 0;
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  background: var(--bg-card);
+  transition: all 0.15s;
+  display: flex; align-items: center; justify-content: center;
+}
+.session-check:checked { background: var(--navy); border-color: var(--navy); }
+.session-check:checked::after { content: '✓'; display: block; text-align: center; color: white; font-size: 11px; line-height: 16px; }
+.session-title { font-size: 14px; color: var(--text); }
+.session-date-txt { font-size: 12px; color: var(--text-light); margin-top: 1px; }
+
+.task-highlight {
+  background: #E8EFF8;
+  border: 1px solid rgba(46,95,163,0.2);
+  border-left: 3px solid #2E5FA3;
+  border-radius: var(--radius-sm);
+  padding: 12px 14px;
+  margin-bottom: 14px;
+}
+.task-highlight p { font-size: 14px; color: #1B3A6B; font-weight: 500; }
+.task-highlight small { font-size: 12px; color: #4a6490; display: block; margin-top: 3px; }
+
+.indicator-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 12px;
+  padding: 11px 0;
+  border-bottom: 1px solid var(--border);
+}
+.indicator-row:last-child { border-bottom: none; }
+.ind-label { font-size: 14px; color: var(--text); }
+.ind-type { font-size: 11px; color: var(--text-light); margin-top: 1px; }
+.stars { display: flex; gap: 3px; }
+.star {
+  width: 28px; height: 28px;
+  border-radius: 6px;
+  border: 1px solid var(--border-strong);
+  background: var(--bg);
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 500;
+  color: var(--text-muted);
+  transition: all 0.1s;
+  user-select: none;
+}
+.star:hover { border-color: var(--gold); }
+.star.on { background: var(--gold-mid); border-color: var(--gold); color: #412402; }
+
+.phrase-pill {
+  display: inline-block;
+  background: #E8EFF8;
+  color: #1B3A6B;
+  font-size: 13px;
+  padding: 5px 13px;
+  border-radius: 20px;
+  margin: 3px 4px 3px 0;
+  font-style: italic;
+  border: 1px solid rgba(46,95,163,0.18);
+  cursor: pointer;
+}
+.phrase-pill:hover { border-color: rgba(46,95,163,0.4); }
+
+.tool-item { padding: 12px 0; border-bottom: 1px solid var(--border); display: flex; align-items: flex-start; gap: 12px; }
+.tool-item:last-child { border-bottom: none; }
+.tool-icon { width: 36px; height: 36px; border-radius: var(--radius-sm); background: #E8EFF8; display: flex; align-items: center; justify-content: center; font-size: 15px; color: #2E5FA3; flex-shrink: 0; }
+.tool-name { font-size: 14px; font-weight: 500; color: var(--text); }
+.tool-desc { font-size: 13px; color: var(--text-muted); margin-top: 2px; line-height: 1.5; }
+.tool-lab { font-size: 11px; color: var(--gold); margin-top: 3px; font-weight: 500; }
+
+.metric { background: var(--bg); border-radius: var(--radius-sm); padding: 14px 16px; }
+.metric-val { font-family: 'DM Serif Display', serif; font-size: 30px; color: var(--navy); }
+.metric-label { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+
+.archive-entry { border-left: 3px solid #2E5FA3; padding: 8px 0 8px 14px; margin-bottom: 12px; }
+.archive-date-label { font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-light); margin-bottom: 3px; }
+.archive-text { font-size: 14px; color: var(--text); line-height: 1.6; }
+
+.print-btn {
+  font-size: 13px;
+  padding: 6px 14px;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: 'DM Sans', sans-serif;
+  transition: all 0.15s;
+}
+.print-btn:hover { background: var(--bg); color: var(--text); }
+
+.info-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; }
+.section-head { font-family: 'DM Serif Display', serif; font-size: 18px; font-weight: 400; color: var(--text); }
+
+.modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(12,35,64,0.5);
+  z-index: 999;
+  align-items: center;
+  justify-content: center;
+}
+.modal-overlay.open { display: flex; }
+.modal { background: var(--bg-card); border-radius: var(--radius); padding: 1.5rem; width: min(480px, calc(100vw - 2rem)); box-shadow: var(--shadow-lg); }
+.modal h3 { font-family: 'DM Serif Display', serif; font-size: 18px; margin-bottom: 1rem; color: var(--text); font-weight: 400; }
+.modal-actions { display: flex; gap: 8px; margin-top: 1rem; justify-content: flex-end; }
+.btn-primary { background: var(--navy); color: white; border: none; padding: 8px 20px; border-radius: var(--radius-sm); cursor: pointer; font-family: 'DM Sans', sans-serif; font-size: 14px; }
+.btn-cancel { background: transparent; color: var(--text-muted); border: 1px solid var(--border-strong); padding: 8px 16px; border-radius: var(--radius-sm); cursor: pointer; font-family: 'DM Sans', sans-serif; font-size: 14px; }
+.btn-gold { background: var(--gold); color: white; border: none; padding: 12px 16px; border-radius: var(--radius-sm); cursor: pointer; font-family: 'DM Sans', sans-serif; font-size: 14px; text-align: left; width: 100%; margin-bottom: 6px; }
+.btn-navy-full { background: var(--navy); color: white; border: none; padding: 12px 16px; border-radius: var(--radius-sm); cursor: pointer; font-family: 'DM Sans', sans-serif; font-size: 14px; text-align: left; width: 100%; margin-bottom: 6px; }
+
+.rm-btn { background: none; border: none; color: var(--text-light); cursor: pointer; font-size: 12px; padding: 2px 6px; line-height: 1; }
+.rm-btn:hover { color: var(--text-muted); }
+
+.add-row { display: flex; gap: 8px; align-items: center; }
+.add-row .editable-field { flex: 1; margin: 0; }
+
+select.field-select {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  padding: 7px 10px;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  background: var(--bg);
+  color: var(--text);
+  cursor: pointer;
+}
+
+@media (max-width: 620px) {
+  .grid2, .grid3 { grid-template-columns: 1fr; }
+  .main { padding: 1rem 1rem 3rem; }
+  .header-inner { padding: 0.875rem 1rem; }
+  .header-right { display: none; }
+}
+
+@media print {
+  .tabs, .save-btn, .no-print, .edit-mode-bar, .add-row, .rm-btn { display: none !important; }
+  .panel { display: block !important; page-break-inside: avoid; }
+  .header { position: static; box-shadow: none; }
+  body { background: white; }
+  .card { box-shadow: none; break-inside: avoid; border: 1px solid #ddd; margin-bottom: 0.75rem; }
+  .main { padding: 1rem; }
+}
+
+/* Print window overlay */
+.print-preview-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(12,35,64,0.5);
+  z-index: 9999;
+  align-items: center;
+  justify-content: center;
+}
+.print-preview-overlay.open { display: flex; }
+.print-preview-box {
+  background: var(--bg-card);
+  border-radius: var(--radius);
+  width: min(560px, calc(100vw - 2rem));
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: var(--shadow-lg);
+}
+.print-preview-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  background: var(--bg-card);
+  z-index: 1;
+}
+.print-preview-header h3 {
+  font-family: 'DM Serif Display', serif;
+  font-size: 16px;
+  font-weight: 400;
+  color: var(--text);
+}
+.print-preview-actions { display: flex; gap: 8px; }
+.print-preview-body { padding: 1.25rem; }
+
+/* Printed page layout */
+.print-block { margin-bottom: 1.25rem; }
+.print-block-title {
+  font-size: 10px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #2E5FA3;
+  margin-bottom: 6px;
+  padding-bottom: 4px;
+  border-bottom: 1px solid rgba(27,58,107,.1);
+}
+.print-block-content { font-size: 14px; color: var(--text); line-height: 1.6; }
+.print-block-content ul { padding-left: 1.2rem; }
+.print-block-content li { margin-bottom: 3px; }
+.print-pill {
+  display: inline-block;
+  background: #E8EFF8;
+  color: #1B3A6B;
+  font-size: 12px;
+  padding: 3px 10px;
+  border-radius: 20px;
+  margin: 2px 3px 2px 0;
+  font-style: italic;
+  border: 1px solid rgba(46,95,163,.15);
+}
+.print-task-box {
+  background: var(--gold-light);
+  border-left: 3px solid var(--gold);
+  border-radius: var(--radius-sm);
+  padding: 10px 12px;
+  font-size: 14px;
+  color: #412402;
+}
+.print-task-box small { display: block; font-size: 12px; color: #633806; margin-top: 3px; }
+.print-ind-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 7px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 14px;
+}
+.print-ind-row:last-child { border-bottom: none; }
+.print-stars { display: flex; gap: 2px; }
+.print-star {
+  width: 18px; height: 18px;
+  border-radius: 3px;
+  border: 1px solid var(--border-strong);
+  background: var(--bg);
+  display: inline-flex; align-items: center; justify-content: center;
+  font-size: 10px; font-weight: 500; color: var(--text-light);
+}
+.print-star.on { background: var(--gold-mid); border-color: var(--gold); color: #412402; }
+.print-header-block {
+  border-bottom: 2px solid var(--navy);
+  padding-bottom: 10px;
+  margin-bottom: 16px;
+}
+.print-header-block h2 {
+  font-family: 'DM Serif Display', serif;
+  font-size: 20px;
+  font-weight: 400;
+  color: var(--navy);
+}
+.print-header-block p { font-size: 12px; color: var(--text-muted); margin-top: 3px; }
+.print-tool-row {
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 14px;
+}
+.print-tool-row:last-child { border-bottom: none; }
+.print-tool-name { font-weight: 500; color: var(--text); }
+.print-tool-desc { color: var(--text-muted); font-size: 13px; margin-top: 1px; }
+.print-tool-lab { color: var(--gold); font-size: 11px; margin-top: 2px; font-weight: 500; }
+</style>
+</head>
+<body>
+
+<div class="edit-mode-bar">
+  <span id="editBarText">Percorso di sviluppo Erika</span>
+  &nbsp;&mdash;&nbsp;
+  <a onclick="openRoleModal()">chi sta usando questo strumento?</a>
+  &nbsp;&nbsp;|&nbsp;&nbsp;
+  <a onclick="downloadFile()" title="Salva il file HTML sul tuo dispositivo">&#8595; scarica file</a>
+</div>
+
+<div class="header">
+  <div style="display:flex;align-items:stretch;overflow:hidden;">
+    <div style="background:#fff;padding:10px 20px;display:flex;align-items:center;flex-shrink:0;">
+      <img src="https://www.rossanacal.it/wp-content/uploads/2024/02/logo-rossana-v2-2.jpg"
+           alt="Rossana Elena Cal — Psicologa del lavoro"
+           style="height:34px;width:auto;display:block;">
+    </div>
+    <div style="width:3px;background:#2E5FA3;flex-shrink:0;"></div>
+    <div class="header-inner" style="flex:1;">
+      <div>
+        <div style="font-size:9px;color:rgba(255,255,255,.45);text-transform:uppercase;letter-spacing:.1em;margin-bottom:3px;">Rossana Elena Cal &middot; Psicologa del lavoro</div>
+        <div class="header-title">Percorso di sviluppo — Erika</div>
+        <div class="header-sub">6 mesi &middot; 5 laboratori &middot; coaching individuale</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;flex-shrink:0;">
+        <div class="period-badge" id="headerPeriod">giu — nov 2026</div>
+        <div class="month-badge" id="headerBadge">…</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="main">
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab('timeline')"><i class="fa-regular fa-map"></i> Percorso</button>
+    <button class="tab" onclick="switchTab('session')"><i class="fa-regular fa-file-lines"></i> Sessione</button>
+    <button class="tab" onclick="switchTab('tasks')"><i class="fa-regular fa-square-check"></i> Compiti</button>
+    <button class="tab" onclick="switchTab('indicators')"><i class="fa-regular fa-chart-bar"></i> Indicatori</button>
+    <button class="tab" onclick="switchTab('tools')"><i class="fa-solid fa-toolbox"></i> Attrezzi</button>
+    <button class="tab" onclick="switchTab('archive')"><i class="fa-regular fa-folder-open"></i> Archivio</button>
+  </div>
+
+  <!-- PERCORSO -->
+  <div id="tab-timeline" class="panel active">
+    <div class="card">
+      <div class="card-label"><i class="fa-solid fa-route"></i> Linea del tempo del percorso</div>
+      <div class="timeline-wrap">
+        <div class="timeline" id="mainTimeline"></div>
+      </div>
+      <p style="font-size:11px;color:var(--text-light);margin-top:6px;">
+        <i class="fa-solid fa-circle" style="color:var(--navy-mid);font-size:8px;vertical-align:1px;"></i>&nbsp;mese in corso &nbsp;&nbsp;
+        <i class="fa-solid fa-circle" style="color:var(--navy);font-size:8px;vertical-align:1px;"></i>&nbsp;completato
+      </p>
+    </div>
+
+    <div class="grid2">
+      <div class="card">
+        <div class="card-label"><i class="fa-regular fa-calendar"></i> Sessioni del mese corrente</div>
+        <div id="sessionsCurrentMonth"></div>
+        <button class="save-btn no-print" onclick="openAddSessionModal()" style="background:transparent;color:var(--navy);border:1px solid var(--border-strong);font-size:12px;padding:5px 12px;">
+          <i class="fa-solid fa-plus"></i> Aggiungi sessione
+        </button>
+      </div>
+      <div class="card">
+        <div class="card-label"><i class="fa-solid fa-crosshairs"></i> Focus del mese</div>
+        <div class="field-group">
+          <label class="field-label">Titolo focus</label>
+          <input type="text" class="editable-field single" id="focusTitle" placeholder="Es. Sblocco comunicativo">
+        </div>
+        <div class="field-group">
+          <label class="field-label">Descrizione breve</label>
+          <textarea class="editable-field" id="focusDesc" style="min-height:60px;" placeholder="In una o due frasi, cosa lavoriamo questo mese?"></textarea>
+        </div>
+        <button class="save-btn no-print" onclick="saveFocus()">
+          <i class="fa-solid fa-floppy-disk"></i> Salva <span class="save-ok" id="ok-focus">&#10003; salvato</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="grid3">
+      <div class="card metric">
+        <div class="metric-val" id="metSessions">0</div>
+        <div class="metric-label">sessioni completate</div>
+      </div>
+      <div class="card metric">
+        <div class="metric-val" id="metMonths">0</div>
+        <div class="metric-label">mesi completati</div>
+      </div>
+      <div class="card metric">
+        <div class="metric-val" id="metTools">0</div>
+        <div class="metric-label">strumenti nella cassetta</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SESSIONE -->
+  <div id="tab-session" class="panel">
+    <div class="info-row no-print">
+      <span style="font-size:13px;color:var(--text-muted);">Scheda da condividere con Erika dopo la sessione</span>
+      <button class="print-btn" onclick="printSection('session')"><i class="fa-solid fa-print"></i> Stampa scheda</button>
+    </div>
+    <div class="card">
+      <div class="card-label"><i class="fa-regular fa-lightbulb"></i> Punto chiave della sessione</div>
+      <span class="role-badge role-coach"><i class="fa-solid fa-pen"></i> Coach inserisce</span>
+      <div class="field-group">
+        <textarea class="editable-field" id="sessionKey" placeholder="L'idea principale che Erika deve portarsi via da questa sessione. Una frase chiara e concreta."></textarea>
+      </div>
+      <button class="save-btn no-print" onclick="saveField('sessionKey')">
+        <i class="fa-solid fa-floppy-disk"></i> Salva <span class="save-ok" id="ok-sessionKey">&#10003; salvato</span>
+      </button>
+    </div>
+
+    <div class="card">
+      <div class="card-label"><i class="fa-regular fa-eye"></i> Segnali da riconoscere</div>
+      <span class="role-badge role-coach"><i class="fa-solid fa-pen"></i> Coach inserisce</span>
+      <p style="font-size:13px;color:var(--text-muted);margin-bottom:10px;">I segnali interni che indicano l'avvio del blocco o della dispersione.</p>
+      <div id="signalsList" style="margin-bottom:10px;"></div>
+      <div class="add-row no-print">
+        <input type="text" class="editable-field single" id="newSignal" placeholder="Es. Cerco troppe parole insieme…">
+        <button class="save-btn" onclick="addSignal()" style="margin:0;padding:7px 14px;"><i class="fa-solid fa-plus"></i></button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-label"><i class="fa-regular fa-comment-dots"></i> Frasi di appoggio</div>
+      <span class="role-badge role-coach"><i class="fa-solid fa-pen"></i> Coach inserisce</span>
+      <p style="font-size:13px;color:var(--text-muted);margin-bottom:10px;">Le formule pronte da usare nei momenti di pressione. Si arricchiscono nel tempo.</p>
+      <div id="phrasesList" style="margin-bottom:10px;"></div>
+      <div class="add-row no-print">
+        <input type="text" class="editable-field single" id="newPhrase" placeholder="Es. &quot;Il punto centrale è questo.&quot;">
+        <button class="save-btn" onclick="addPhrase()" style="margin:0;padding:7px 14px;"><i class="fa-solid fa-plus"></i></button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-label"><i class="fa-regular fa-pen-to-square"></i> Note libere di Erika</div>
+      <span class="role-badge role-erika"><i class="fa-solid fa-user"></i> Erika scrive</span>
+      <div class="field-group">
+        <textarea class="editable-field" id="erikaNotes" placeholder="Come hai vissuto la sessione? Cosa ti ha colpito? Cosa vuoi ricordare di oggi?"></textarea>
+      </div>
+      <button class="save-btn no-print" onclick="saveField('erikaNotes')">
+        <i class="fa-solid fa-floppy-disk"></i> Salva <span class="save-ok" id="ok-erikaNotes">&#10003; salvato</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- COMPITI -->
+  <div id="tab-tasks" class="panel">
+    <div class="info-row no-print">
+      <span style="font-size:13px;color:var(--text-muted);">Promemoria settimanale da tenere a portata di mano</span>
+      <button class="print-btn" onclick="printSection('tasks')"><i class="fa-solid fa-print"></i> Stampa compito</button>
+    </div>
+    <div class="card">
+      <div class="card-label"><i class="fa-solid fa-list-check"></i> Compito intersessione</div>
+      <span class="role-badge role-coach"><i class="fa-solid fa-pen"></i> Coach definisce</span>
+      <div class="task-highlight">
+        <p id="taskMainDisplay">Nessun compito ancora assegnato.</p>
+        <small id="taskSubDisplay"></small>
+      </div>
+      <div class="field-group">
+        <label class="field-label">Compito principale</label>
+        <textarea class="editable-field" id="taskMainEdit" style="min-height:60px;" placeholder="Es. Usare una frase-ponte in almeno 2 situazioni reali questa settimana."></textarea>
+      </div>
+      <div class="field-group">
+        <label class="field-label">Istruzione operativa (facoltativa)</label>
+        <input type="text" class="editable-field single" id="taskSubEdit" placeholder="Es. Annota: situazione · frase usata · effetto percepito">
+      </div>
+      <button class="save-btn no-print" onclick="saveTask()">
+        <i class="fa-solid fa-floppy-disk"></i> Salva <span class="save-ok" id="ok-task">&#10003; salvato</span>
+      </button>
+    </div>
+
+    <div class="card">
+      <div class="card-label"><i class="fa-regular fa-message"></i> Come è andata — risposta di Erika</div>
+      <span class="role-badge role-erika"><i class="fa-solid fa-user"></i> Erika scrive</span>
+      <div class="field-group">
+        <textarea class="editable-field" id="taskReply" placeholder="Descrivi le situazioni in cui hai usato (o provato a usare) lo strumento. Cosa è successo? Come ti sei sentita?"></textarea>
+      </div>
+      <button class="save-btn no-print" onclick="saveField('taskReply')">
+        <i class="fa-solid fa-floppy-disk"></i> Salva <span class="save-ok" id="ok-taskReply">&#10003; salvato</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- INDICATORI -->
+  <div id="tab-indicators" class="panel">
+    <div class="card">
+      <div class="card-label"><i class="fa-solid fa-sliders"></i> Indicatori del mese — definiti dal coach</div>
+      <span class="role-badge role-coach"><i class="fa-solid fa-pen"></i> Coach definisce le domande</span>
+      <p style="font-size:13px;color:var(--text-muted);margin-bottom:12px;">Inserisci gli indicatori da monitorare questo mese. Puoi aggiornarli mese per mese.</p>
+      <div id="indicatorEditor"></div>
+      <div class="no-print" style="margin-top:10px;display:grid;grid-template-columns:1fr auto auto;gap:8px;align-items:center;">
+        <input type="text" class="editable-field single" id="newIndLabel" placeholder="Es. Ho usato almeno una frase-ponte">
+        <select class="field-select" id="newIndType">
+          <option value="comportamento">comportamento</option>
+          <option value="percezione">percezione</option>
+        </select>
+        <button class="save-btn" onclick="addIndicator()" style="margin:0;padding:7px 14px;"><i class="fa-solid fa-plus"></i></button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-label"><i class="fa-regular fa-star"></i> Autovalutazione settimanale</div>
+      <span class="role-badge role-erika"><i class="fa-solid fa-user"></i> Erika compila</span>
+      <p style="font-size:13px;color:var(--text-muted);margin-bottom:14px;">Valuta da 1 a 5 — nessun giudizio, solo un'istantanea onesta della settimana.</p>
+      <div id="erikaStars"></div>
+      <div style="margin-top:16px;">
+        <label class="field-label">Cosa è stato diverso questa settimana? <span style="font-weight:300;">(una frase)</span></label>
+        <textarea class="editable-field" id="weekDiff" style="min-height:50px;" placeholder="Es. Ho aspettato un secondo prima di rispondere e ho tenuto il filo."></textarea>
+        <button class="save-btn no-print" onclick="saveErikaEval()">
+          <i class="fa-solid fa-floppy-disk"></i> Salva <span class="save-ok" id="ok-erikaEval">&#10003; salvato</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- CASSETTA ATTREZZI -->
+  <div id="tab-tools" class="panel">
+    <div class="info-row no-print">
+      <span style="font-size:13px;color:var(--text-muted);">Gli strumenti costruiti nel percorso</span>
+      <button class="print-btn" onclick="printSection('tools')"><i class="fa-solid fa-print"></i> Stampa attrezzi</button>
+    </div>
+    <div class="card">
+      <div class="card-label"><i class="fa-solid fa-toolbox"></i> Cassetta degli attrezzi</div>
+      <p style="font-size:13px;color:var(--text-muted);margin-bottom:16px;">
+        Gli strumenti costruiti insieme nel percorso. Si arricchisce laboratorio dopo laboratorio.
+      </p>
+      <div id="toolsList"></div>
+      <div class="no-print" style="margin-top:14px;border-top:1px solid var(--border);padding-top:14px;">
+        <span class="role-badge role-coach" style="margin-bottom:10px;"><i class="fa-solid fa-pen"></i> Coach aggiunge strumenti</span>
+        <div class="field-group">
+          <label class="field-label">Nome strumento</label>
+          <input type="text" class="editable-field single" id="newToolName" placeholder="Es. Schema anti-blocco">
+        </div>
+        <div class="field-group">
+          <label class="field-label">Descrizione</label>
+          <input type="text" class="editable-field single" id="newToolDesc" placeholder="Es. 3 colonne: segnali → frase-ponte → messaggio essenziale">
+        </div>
+        <div class="field-group">
+          <label class="field-label">Laboratorio di riferimento</label>
+          <input type="text" class="editable-field single" id="newToolLab" placeholder="Es. Laboratorio 1 · giugno 2026">
+        </div>
+        <button class="save-btn" onclick="addTool()">
+          <i class="fa-solid fa-plus"></i> Aggiungi <span class="save-ok" id="ok-tool">&#10003; aggiunto</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ARCHIVIO -->
+  <div id="tab-archive" class="panel">
+    <div class="info-row">
+      <span class="section-head">Storico del percorso</span>
+      <button class="print-btn no-print" onclick="printSection('archive')"><i class="fa-solid fa-print"></i> Stampa archivio</button>
+    </div>
+    <div id="archiveList"></div>
+    <div class="card no-print">
+      <div class="card-label"><i class="fa-regular fa-floppy-disk"></i> Archivia sessione corrente</div>
+      <span class="role-badge role-coach"><i class="fa-solid fa-pen"></i> Coach archivia dopo ogni sessione</span>
+      <p style="font-size:13px;color:var(--text-muted);margin-bottom:12px;">Salva un'istantanea della sessione nello storico permanente del percorso.</p>
+      <div class="field-group">
+        <label class="field-label">Data sessione</label>
+        <input type="date" class="editable-field single" id="archiveDate">
+      </div>
+      <div class="field-group">
+        <label class="field-label">Punto chiave <span style="font-weight:300;color:var(--text-light);">(ripreso automaticamente dal campo sessione)</span></label>
+        <input type="text" class="editable-field single" id="archiveKeyPreview" readonly style="background:#f3f3f0;cursor:default;color:var(--text-muted);">
+      </div>
+      <div class="field-group">
+        <label class="field-label">Note di Erika <span style="font-weight:300;color:var(--text-light);">(ripreso automaticamente)</span></label>
+        <input type="text" class="editable-field single" id="archiveErikaPreview" readonly style="background:#f3f3f0;cursor:default;color:var(--text-muted);">
+      </div>
+      <div class="field-group">
+        <label class="field-label">Segnale di progresso osservato</label>
+        <textarea class="editable-field" id="archiveProgress" style="min-height:60px;" placeholder="Cosa hai osservato di positivo o di nuovo in questa sessione?"></textarea>
+      </div>
+      <button class="save-btn" onclick="archiveSession()">
+        <i class="fa-solid fa-box-archive"></i> Archivia sessione <span class="save-ok" id="ok-archive">&#10003; archiviato</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- PRINT PREVIEW OVERLAY -->
+<div class="print-preview-overlay" id="printOverlay">
+  <div class="print-preview-box">
+    <div class="print-preview-header">
+      <h3 id="printOverlayTitle">Anteprima di stampa</h3>
+      <div class="print-preview-actions">
+        <button class="btn-cancel" onclick="closePrintOverlay()"><i class="fa-solid fa-xmark"></i> Chiudi</button>
+        <button class="btn-primary" onclick="doPrint()"><i class="fa-solid fa-print"></i> Stampa</button>
+      </div>
+    </div>
+    <div class="print-preview-body" id="printOverlayBody"></div>
+  </div>
+</div>
+
+<!-- MODAL: ruolo -->
+<div class="modal-overlay" id="roleModal">
+  <div class="modal">
+    <h3>Chi sta usando questo strumento?</h3>
+    <p style="font-size:13px;color:var(--text-muted);margin-bottom:14px;">Nessun accesso protetto — serve solo per ricordare a chi appartengono i campi.</p>
+    <button class="btn-navy-full" onclick="setRole('coach')">
+      <strong>Coach</strong><br><span style="font-weight:300;font-size:13px;opacity:0.8;">Inserisco punti chiave, compiti, indicatori e archivio</span>
+    </button>
+    <button class="btn-gold" onclick="setRole('erika')">
+      <strong>Erika</strong><br><span style="font-weight:300;font-size:13px;opacity:0.9;">Scrivo le mie note, rispondo ai compiti e mi autovaluto</span>
+    </button>
+    <button class="btn-cancel" onclick="closeModal('roleModal')" style="width:100%;margin-top:4px;text-align:center;">Solo guardare</button>
+  </div>
+</div>
+
+<!-- MODAL: aggiungi sessione -->
+<div class="modal-overlay" id="addSessionModal">
+  <div class="modal">
+    <h3>Aggiungi sessione</h3>
+    <div class="field-group">
+      <label class="field-label">Tipo</label>
+      <select class="field-select" id="newSessType" style="width:100%;">
+        <option value="Sessione 1h">Sessione 1h</option>
+        <option value="Laboratorio 2h">Laboratorio 2h</option>
+      </select>
+    </div>
+    <div class="field-group">
+      <label class="field-label">Titolo / tema</label>
+      <input type="text" class="editable-field single" id="newSessTitle" placeholder="Es. Lettura del pattern">
+    </div>
+    <div class="field-group">
+      <label class="field-label">Data</label>
+      <input type="date" class="editable-field single" id="newSessDate">
+    </div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeModal('addSessionModal')">Annulla</button>
+      <button class="btn-primary" onclick="addSession()">Aggiungi</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const SK = 'coaching_erika_v2';
+
+const DEFAULT = {
+  role: null,
+  months: [
+    { label: 'Giu', focus: 'Sblocco comunicativo', status: 'current' },
+    { label: 'Lug', focus: 'Assertività', status: 'upcoming' },
+    { label: 'Ago', focus: 'Pressione', status: 'upcoming' },
+    { label: 'Set', focus: 'Memoria', status: 'upcoming' },
+    { label: 'Ott', focus: 'Metodo', status: 'upcoming' },
+  ],
+  sessions: [
+    { type: 'Sessione 1h', title: 'Analisi episodi', date: '2026-06-03', done: true },
+    { type: 'Sessione 1h', title: 'Lettura del pattern', date: '2026-06-17', done: true },
+    { type: 'Laboratorio 2h', title: 'Protocollo anti-blocco', date: '2026-06-28', done: false },
+  ],
+  focusTitle: 'Sblocco comunicativo',
+  focusDesc: 'Riconoscere i segnali del blocco e usare frasi-ponte per mantenere la presenza nel dialogo.',
+  sessionKey: '',
+  signals: ['Cerco troppe parole insieme', 'Rallento in modo confuso', 'Provo a dire tutto insieme', 'Temo di sbagliare e perdo il punto'],
+  phrases: ['"Il punto centrale è questo."', '"Un attimo, metto in ordine il punto."', '"Su questo distinguerei due aspetti."', '"Quello che conta qui è…"'],
+  erikaNotes: '',
+  taskMain: '',
+  taskSub: '',
+  taskReply: '',
+  indicators: [
+    { label: 'Ho usato almeno una frase-ponte', type: 'comportamento', val: 0 },
+    { label: 'Mi sono sentita più lucida nelle situazioni difficili', type: 'percezione', val: 0 },
+    { label: 'Ho portato il punto centrale senza perdermi', type: 'comportamento', val: 0 },
+    { label: 'Ho riconosciuto il segnale prima di bloccarmi', type: 'comportamento', val: 0 },
+  ],
+  weekDiff: '',
+  tools: [
+    { name: 'Schema anti-blocco', desc: '3 colonne: segnali che avverto → frase-ponte → messaggio essenziale', lab: 'Laboratorio 1 · giugno 2026' }
+  ],
+  archive: []
+};
+
+let S = JSON.parse(JSON.stringify(DEFAULT));
+
+function load() {
+  try {
+    const raw = localStorage.getItem(SK);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      S = Object.assign(JSON.parse(JSON.stringify(DEFAULT)), parsed);
+    }
+  } catch(e) {}
+}
+
+function save() {
+  try { localStorage.setItem(SK, JSON.stringify(S)); } catch(e) {}
+}
+
+// ROLE
+function openRoleModal() { document.getElementById('roleModal').classList.add('open'); }
+function setRole(r) {
+  S.role = r;
+  save();
+  closeModal('roleModal');
+  const labels = { coach: 'Coach', erika: 'Erika', null: '' };
+  document.getElementById('editBarText').textContent = r === 'coach'
+    ? 'Stai lavorando come Coach'
+    : r === 'erika'
+    ? 'Stai lavorando come Erika'
+    : 'Percorso di sviluppo Erika';
+}
+
+// TABS
+function switchTab(name) {
+  const names = ['timeline','session','tasks','indicators','tools','archive'];
+  document.querySelectorAll('.tab').forEach((t,i) => t.classList.toggle('active', names[i] === name));
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  if (name === 'archive') syncArchivePreviews();
+}
+
+// TIMELINE
+const START_DATE = new Date(2026, 5, 1); // 1 giugno 2026 = Mese 1
+function computeCurrentMonth() {
+  const now = new Date();
+  const diffMs = now - START_DATE;
+  if (diffMs < 0) return 0; // prima dell'inizio
+  const diffMonths = Math.floor(diffMs / (1000 * 60 * 60 * 24 * 30.44));
+  return Math.min(diffMonths, S.months.length - 1); // 0-indexed
+}
+function renderTimeline() {
+  const tl = document.getElementById('mainTimeline');
+  tl.innerHTML = '';
+  const curIdx = computeCurrentMonth();
+  // auto-set statuses based on today's date
+  S.months.forEach((m, i) => {
+    if (i < curIdx) m.status = 'done';
+    else if (i === curIdx) m.status = 'current';
+    else m.status = 'upcoming';
+  });
+  S.months.forEach((m, i) => {
+    const step = document.createElement('div');
+    step.className = 'tl-step ' + (m.status || 'upcoming');
+    const icon = m.status === 'done'
+      ? '<i class="fa-solid fa-check" style="font-size:13px"></i>'
+      : (i + 1);
+    step.innerHTML = `<div class="tl-dot">${icon}</div>
+      <div class="tl-info">
+        <div class="tl-month">${m.label}</div>
+        <div class="tl-focus">${m.focus || ''}</div>
+      </div>`;
+    tl.appendChild(step);
+    if (i < S.months.length - 1) {
+      const c = document.createElement('div');
+      c.className = 'tl-connector' + (m.status === 'done' ? ' done' : '');
+      tl.appendChild(c);
+    }
+  });
+  // update header badge with month name
+  const cur = S.months[curIdx];
+  const monthNames = ['Gennaio','Febbraio','Marzo','Aprile','Maggio','Giugno','Luglio','Agosto','Settembre','Ottobre','Novembre','Dicembre'];
+  const now = new Date();
+  const badge = document.getElementById('headerBadge');
+  if (badge) badge.textContent = `${monthNames[now.getMonth()]} — Mese ${curIdx + 1}`;
+}
+
+// SESSIONS
+function renderSessions() {
+  const el = document.getElementById('sessionsCurrentMonth');
+  el.innerHTML = '';
+  S.sessions.forEach((s, i) => {
+    const row = document.createElement('div');
+    row.className = 'session-row';
+    row.innerHTML = `<input type="checkbox" class="session-check" ${s.done ? 'checked' : ''} onchange="toggleSession(${i},this.checked)">
+      <div style="flex:1;min-width:0;">
+        <div class="session-title">${s.type} — ${s.title}</div>
+        <div class="session-date-txt">${fmtDate(s.date)}</div>
+      </div>
+      <button class="rm-btn no-print" onclick="removeSession(${i})"><i class="fa-solid fa-xmark"></i></button>`;
+    el.appendChild(row);
+  });
+  document.getElementById('metSessions').textContent = S.sessions.filter(x => x.done).length;
+  document.getElementById('metMonths').textContent = S.months.filter(x => x.status === 'done').length;
+  document.getElementById('metTools').textContent = S.tools.length;
+}
+
+function toggleSession(i, v) { S.sessions[i].done = v; save(); renderSessions(); }
+function removeSession(i) { S.sessions.splice(i,1); save(); renderSessions(); }
+
+function openAddSessionModal() {
+  document.getElementById('newSessTitle').value = '';
+  document.getElementById('newSessDate').value = '';
+  document.getElementById('addSessionModal').classList.add('open');
+}
+function addSession() {
+  const type = document.getElementById('newSessType').value;
+  const title = document.getElementById('newSessTitle').value.trim();
+  const date = document.getElementById('newSessDate').value;
+  if (!title) return;
+  S.sessions.push({ type, title, date, done: false });
+  save();
+  renderSessions();
+  closeModal('addSessionModal');
+}
+
+// FOCUS
+function loadFocus() {
+  document.getElementById('focusTitle').value = S.focusTitle || '';
+  document.getElementById('focusDesc').value = S.focusDesc || '';
+}
+function saveFocus() {
+  S.focusTitle = document.getElementById('focusTitle').value;
+  S.focusDesc = document.getElementById('focusDesc').value;
+  // update timeline
+  const cur = S.months.find(m => m.status === 'current');
+  if (cur) cur.focus = S.focusTitle;
+  save();
+  renderTimeline();
+  showOk('ok-focus');
+}
+
+// SESSION FIELDS
+function saveField(id) {
+  S[id] = document.getElementById(id).value;
+  save();
+  showOk('ok-' + id);
+}
+function loadSessionFields() {
+  ['sessionKey','erikaNotes','taskReply','weekDiff'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = S[id] || '';
+  });
+}
+
+// SIGNALS
+function renderSignals() {
+  const el = document.getElementById('signalsList');
+  el.innerHTML = '';
+  S.signals.forEach((s, i) => {
+    const row = document.createElement('div');
+    row.style.cssText = 'display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid var(--border);';
+    row.innerHTML = `<span style="flex:1;font-size:14px;color:var(--text-muted);">${s}</span>
+      <button class="rm-btn no-print" onclick="removeSignal(${i})"><i class="fa-solid fa-xmark"></i></button>`;
+    el.appendChild(row);
+  });
+}
+function addSignal() {
+  const v = document.getElementById('newSignal').value.trim();
+  if (!v) return;
+  S.signals.push(v); save();
+  document.getElementById('newSignal').value = '';
+  renderSignals();
+}
+function removeSignal(i) { S.signals.splice(i,1); save(); renderSignals(); }
+
+// PHRASES
+function renderPhrases() {
+  const el = document.getElementById('phrasesList');
+  el.innerHTML = '';
+  S.phrases.forEach((p, i) => {
+    const span = document.createElement('span');
+    span.className = 'phrase-pill';
+    span.title = 'Clicca per rimuovere';
+    span.textContent = p;
+    span.onclick = () => { if(confirm('Rimuovere questa frase?')) { S.phrases.splice(i,1); save(); renderPhrases(); } };
+    el.appendChild(span);
+  });
+}
+function addPhrase() {
+  const v = document.getElementById('newPhrase').value.trim();
+  if (!v) return;
+  S.phrases.push(v); save();
+  document.getElementById('newPhrase').value = '';
+  renderPhrases();
+}
+
+// TASK
+function loadTask() {
+  document.getElementById('taskMainEdit').value = S.taskMain || '';
+  document.getElementById('taskSubEdit').value = S.taskSub || '';
+  document.getElementById('taskMainDisplay').textContent = S.taskMain || 'Nessun compito ancora assegnato.';
+  document.getElementById('taskSubDisplay').textContent = S.taskSub || '';
+}
+function saveTask() {
+  S.taskMain = document.getElementById('taskMainEdit').value;
+  S.taskSub = document.getElementById('taskSubEdit').value;
+  save(); loadTask(); showOk('ok-task');
+}
+
+// INDICATORS
+function renderIndicatorEditor() {
+  const el = document.getElementById('indicatorEditor');
+  el.innerHTML = '';
+  S.indicators.forEach((ind, i) => {
+    const row = document.createElement('div');
+    row.style.cssText = 'display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid var(--border);';
+    row.innerHTML = `<span style="flex:1;font-size:14px;color:var(--text);">${ind.label}</span>
+      <span style="font-size:11px;color:var(--text-light);white-space:nowrap;">${ind.type}</span>
+      <button class="rm-btn no-print" onclick="removeIndicator(${i})"><i class="fa-solid fa-xmark"></i></button>`;
+    el.appendChild(row);
+  });
+}
+function addIndicator() {
+  const label = document.getElementById('newIndLabel').value.trim();
+  const type = document.getElementById('newIndType').value;
+  if (!label) return;
+  S.indicators.push({ label, type, val: 0 });
+  save();
+  document.getElementById('newIndLabel').value = '';
+  renderIndicatorEditor();
+  renderErikaStars();
+}
+function removeIndicator(i) {
+  S.indicators.splice(i,1); save();
+  renderIndicatorEditor(); renderErikaStars();
+}
+function renderErikaStars() {
+  const el = document.getElementById('erikaStars');
+  el.innerHTML = '';
+  S.indicators.forEach((ind, i) => {
+    const row = document.createElement('div');
+    row.className = 'indicator-row';
+    const starsDiv = document.createElement('div');
+    starsDiv.className = 'stars';
+    for (let v = 1; v <= 5; v++) {
+      const s = document.createElement('div');
+      s.className = 'star' + (v <= ind.val ? ' on' : '');
+      s.textContent = v;
+      s.onclick = () => { ind.val = v; save(); renderErikaStars(); };
+      starsDiv.appendChild(s);
+    }
+    row.innerHTML = `<div><div class="ind-label">${ind.label}</div><div class="ind-type">${ind.type}</div></div>`;
+    row.appendChild(starsDiv);
+    el.appendChild(row);
+  });
+  document.getElementById('weekDiff').value = S.weekDiff || '';
+}
+function saveErikaEval() {
+  S.weekDiff = document.getElementById('weekDiff').value;
+  save(); showOk('ok-erikaEval');
+}
+
+// TOOLS
+const TOOL_ICONS = ['fa-shield-halved','fa-comments','fa-bolt','fa-brain','fa-sitemap','fa-star','fa-check-double'];
+function renderTools() {
+  const el = document.getElementById('toolsList');
+  el.innerHTML = S.tools.length === 0
+    ? '<p style="font-size:14px;color:var(--text-light);">Nessuno strumento ancora aggiunto.</p>'
+    : '';
+  S.tools.forEach((t, i) => {
+    const item = document.createElement('div');
+    item.className = 'tool-item';
+    item.innerHTML = `<div class="tool-icon"><i class="fa-solid ${TOOL_ICONS[i % TOOL_ICONS.length]}"></i></div>
+      <div style="flex:1;min-width:0;">
+        <div class="tool-name">${t.name}</div>
+        <div class="tool-desc">${t.desc}</div>
+        <div class="tool-lab">${t.lab}</div>
+      </div>
+      <button class="rm-btn no-print" onclick="removeTool(${i})"><i class="fa-solid fa-xmark"></i></button>`;
+    el.appendChild(item);
+  });
+  document.getElementById('metTools').textContent = S.tools.length;
+}
+function addTool() {
+  const name = document.getElementById('newToolName').value.trim();
+  const desc = document.getElementById('newToolDesc').value.trim();
+  const lab = document.getElementById('newToolLab').value.trim();
+  if (!name) return;
+  S.tools.push({ name, desc, lab });
+  save();
+  ['newToolName','newToolDesc','newToolLab'].forEach(id => document.getElementById(id).value = '');
+  renderTools();
+  showOk('ok-tool');
+}
+function removeTool(i) {
+  if (confirm('Rimuovere questo strumento?')) { S.tools.splice(i,1); save(); renderTools(); }
+}
+
+// ARCHIVE
+function renderArchive() {
+  const el = document.getElementById('archiveList');
+  el.innerHTML = '';
+  if (!S.archive.length) {
+    el.innerHTML = '<p style="font-size:14px;color:var(--text-light);margin-bottom:1rem;">Nessuna sessione ancora archiviata. Usa il modulo qui sotto per archiviare la prima.</p>';
+    return;
+  }
+  [...S.archive].reverse().forEach(a => {
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.style.marginBottom = '1rem';
+    let html = `<div class="card-label"><i class="fa-regular fa-folder-open"></i> ${fmtDate(a.date)}</div>
+      <div class="archive-entry">
+        <div class="archive-date-label">Punto chiave</div>
+        <div class="archive-text">${a.key || '—'}</div>
+      </div>`;
+    if (a.erikaNotes && a.erikaNotes.trim()) {
+      html += `<div class="archive-entry" style="border-left-color:var(--gold);">
+        <div class="archive-date-label">Note di Erika</div>
+        <div class="archive-text">${a.erikaNotes}</div>
+      </div>`;
+    }
+    if (a.progress && a.progress.trim()) {
+      html += `<div class="archive-entry" style="border-left-color:var(--gold);">
+        <div class="archive-date-label">Segnale di progresso</div>
+        <div class="archive-text">${a.progress}</div>
+      </div>`;
+    }
+    card.innerHTML = html;
+    el.appendChild(card);
+  });
+}
+function syncArchivePreviews() {
+  const k = document.getElementById('archiveKeyPreview');
+  const e = document.getElementById('archiveErikaPreview');
+  if (k) k.value = S.sessionKey || '';
+  if (e) e.value = S.erikaNotes ? S.erikaNotes.substring(0,80) + (S.erikaNotes.length > 80 ? '…' : '') : '';
+}
+function archiveSession() {
+  const date = document.getElementById('archiveDate').value;
+  const progress = document.getElementById('archiveProgress').value.trim();
+  if (!date) { alert('Inserisci la data della sessione.'); return; }
+  if (!progress) { alert('Inserisci un segnale di progresso.'); return; }
+  S.archive.push({ date, key: S.sessionKey || '', erikaNotes: S.erikaNotes || '', progress });
+  document.getElementById('archiveProgress').value = '';
+  save();
+  renderArchive();
+  showOk('ok-archive');
+}
+
+// PRINT
+function printSection(section) {
+  const today = new Date().toLocaleDateString('it-IT', { day:'numeric', month:'long', year:'numeric' });
+  const cur = S.months.find(m => m.status === 'current');
+  const monthLabel = cur ? cur.label + ' 2026 — ' + (cur.focus || '') : '';
+  let title = '';
+  let html = `<div class="print-header-block">
+    <h2>Percorso di sviluppo — Erika</h2>
+    <p>${monthLabel} &nbsp;·&nbsp; ${today}</p>
+  </div>`;
+
+  if (section === 'session') {
+    title = 'Scheda sessione';
+    if (S.sessionKey) {
+      html += `<div class="print-block">
+        <div class="print-block-title"><i class="fa-regular fa-lightbulb"></i> Punto chiave</div>
+        <div class="print-block-content">${S.sessionKey}</div>
+      </div>`;
+    }
+    if (S.signals.length) {
+      html += `<div class="print-block">
+        <div class="print-block-title"><i class="fa-regular fa-eye"></i> Segnali da riconoscere</div>
+        <div class="print-block-content"><ul>${S.signals.map(s => `<li>${s}</li>`).join('')}</ul></div>
+      </div>`;
+    }
+    if (S.phrases.length) {
+      html += `<div class="print-block">
+        <div class="print-block-title"><i class="fa-regular fa-comment-dots"></i> Frasi di appoggio</div>
+        <div class="print-block-content">${S.phrases.map(p => `<span class="print-pill">${p}</span>`).join('')}</div>
+      </div>`;
+    }
+    if (S.taskMain) {
+      html += `<div class="print-block">
+        <div class="print-block-title"><i class="fa-solid fa-list-check"></i> Compito intersessione</div>
+        <div class="print-block-content">
+          <div class="print-task-box">${S.taskMain}${S.taskSub ? `<small>${S.taskSub}</small>` : ''}</div>
+        </div>
+      </div>`;
+    }
+    if (S.erikaNotes) {
+      html += `<div class="print-block">
+        <div class="print-block-title"><i class="fa-regular fa-pen-to-square"></i> Note di Erika</div>
+        <div class="print-block-content">${S.erikaNotes}</div>
+      </div>`;
+    }
+  }
+
+  else if (section === 'tasks') {
+    title = 'Compito intersessione';
+    if (S.taskMain) {
+      html += `<div class="print-block">
+        <div class="print-block-title"><i class="fa-solid fa-list-check"></i> Il tuo compito questa settimana</div>
+        <div class="print-block-content">
+          <div class="print-task-box" style="font-size:15px;">${S.taskMain}${S.taskSub ? `<small>${S.taskSub}</small>` : ''}</div>
+        </div>
+      </div>`;
+    } else {
+      html += `<p style="font-size:14px;color:var(--text-muted);">Nessun compito ancora assegnato.</p>`;
+    }
+    if (S.phrases.length) {
+      html += `<div class="print-block" style="margin-top:1rem;">
+        <div class="print-block-title"><i class="fa-regular fa-comment-dots"></i> Frasi di appoggio (da usare quando ti blocchi)</div>
+        <div class="print-block-content">${S.phrases.map(p => `<span class="print-pill">${p}</span>`).join('')}</div>
+      </div>`;
+    }
+    if (S.signals.length) {
+      html += `<div class="print-block">
+        <div class="print-block-title"><i class="fa-regular fa-eye"></i> Segnali da riconoscere</div>
+        <div class="print-block-content"><ul>${S.signals.map(s => `<li>${s}</li>`).join('')}</ul></div>
+      </div>`;
+    }
+  }
+
+  else if (section === 'tools') {
+    title = 'Cassetta degli attrezzi';
+    if (!S.tools.length) {
+      html += `<p style="font-size:14px;color:var(--text-muted);">Nessuno strumento ancora aggiunto.</p>`;
+    } else {
+      html += `<div class="print-block">
+        <div class="print-block-title"><i class="fa-solid fa-toolbox"></i> Strumenti costruiti insieme</div>
+        <div class="print-block-content">
+          ${S.tools.map(t => `<div class="print-tool-row">
+            <div class="print-tool-name">${t.name}</div>
+            <div class="print-tool-desc">${t.desc}</div>
+            <div class="print-tool-lab">${t.lab}</div>
+          </div>`).join('')}
+        </div>
+      </div>`;
+    }
+  }
+
+  else if (section === 'archive') {
+    title = 'Storico del percorso';
+    if (!S.archive.length) {
+      html += `<p style="font-size:14px;color:var(--text-muted);">Nessuna sessione ancora archiviata.</p>`;
+    } else {
+      [...S.archive].reverse().forEach(a => {
+        html += `<div class="print-block" style="border-left:3px solid var(--navy);padding-left:14px;margin-bottom:16px;">
+          <div class="print-block-title">${fmtDate(a.date)}</div>
+          ${a.key ? `<div style="margin-bottom:6px;"><span style="font-size:11px;color:var(--text-light);text-transform:uppercase;letter-spacing:.06em;">Punto chiave</span><div class="print-block-content">${a.key}</div></div>` : ''}
+          ${a.erikaNotes ? `<div style="margin-bottom:6px;"><span style="font-size:11px;color:var(--text-light);text-transform:uppercase;letter-spacing:.06em;">Note di Erika</span><div class="print-block-content">${a.erikaNotes}</div></div>` : ''}
+          ${a.progress ? `<div><span style="font-size:11px;color:var(--gold);text-transform:uppercase;letter-spacing:.06em;">Segnale di progresso</span><div class="print-block-content">${a.progress}</div></div>` : ''}
+        </div>`;
+      });
+    }
+  }
+
+  document.getElementById('printOverlayTitle').textContent = title;
+  document.getElementById('printOverlayBody').innerHTML = html;
+  document.getElementById('printOverlay').classList.add('open');
+}
+
+function closePrintOverlay() {
+  document.getElementById('printOverlay').classList.remove('open');
+}
+
+function doPrint() {
+  const body = document.getElementById('printOverlayBody').innerHTML;
+  const today = new Date().toLocaleDateString('it-IT', { day:'numeric', month:'long', year:'numeric' });
+  const w = window.open('', '_blank', 'width=700,height=900');
+  w.document.write(`<!DOCTYPE html><html lang="it"><head>
+    <meta charset="UTF-8">
+    <title>Percorso Erika — Studio Rossana Cal</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+      *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+      body { font-family: 'DM Sans', sans-serif; padding: 0; color: #2C1A0E; font-size: 14px; line-height: 1.6; }
+      .page-wrap { padding: 2rem 2.5rem; min-height: 100vh; display: flex; flex-direction: column; }
+      .page-content { flex: 1; }
+      .doc-header { display: flex; align-items: center; justify-content: space-between; padding-bottom: 12px; border-bottom: 2px solid #2E5FA3; margin-bottom: 20px; }
+      .doc-header img { height: 32px; width: auto; }
+      .doc-header-right { text-align: right; }
+      .doc-title { font-family: 'DM Serif Display', serif; font-size: 16px; color: #1B3A6B; }
+      .doc-date { font-size: 11px; color: #7A90B8; margin-top: 2px; }
+      .print-header-block { margin-bottom: 16px; }
+      .print-header-block h2 { font-family: 'DM Serif Display', serif; font-size: 18px; font-weight: 400; color: #1B3A6B; }
+      .print-header-block p { font-size: 12px; color: #4a6490; margin-top: 3px; }
+      .print-block { margin-bottom: 1.25rem; }
+      .print-block-title { font-size: 10px; font-weight: 500; text-transform: uppercase; letter-spacing: .1em; color: #2E5FA3; margin-bottom: 6px; padding-bottom: 4px; border-bottom: 1px solid rgba(27,58,107,.1); }
+      .print-block-content { font-size: 14px; color: #1B3A6B; line-height: 1.6; }
+      .print-block-content ul { padding-left: 1.2rem; }
+      .print-block-content li { margin-bottom: 3px; }
+      .print-pill { display: inline-block; background: #E8EFF8; color: #1B3A6B; font-size: 12px; padding: 3px 10px; border-radius: 20px; margin: 2px 3px 2px 0; font-style: italic; border: 1px solid rgba(46,95,163,.2); }
+      .print-task-box { background: #E8EFF8; border-left: 3px solid #2E5FA3; border-radius: 6px; padding: 10px 12px; font-size: 14px; color: #1B3A6B; }
+      .print-task-box small { display: block; font-size: 12px; color: #4a6490; margin-top: 3px; }
+      .print-tool-row { padding: 8px 0; border-bottom: 1px solid rgba(27,58,107,.08); }
+      .print-tool-row:last-child { border-bottom: none; }
+      .print-tool-name { font-weight: 500; color: #1B3A6B; }
+      .print-tool-desc { color: #4a6490; font-size: 13px; margin-top: 1px; }
+      .print-tool-lab { color: #2E5FA3; font-size: 11px; margin-top: 2px; font-weight: 500; }
+      .doc-footer { margin-top: 2rem; padding-top: 10px; border-top: 1px solid rgba(27,58,107,.12); display: flex; align-items: center; justify-content: space-between; }
+      .doc-footer-confidential { font-size: 11px; color: #7A90B8; font-style: italic; letter-spacing: .02em; }
+      .doc-footer-studio { font-size: 11px; color: #7A90B8; }
+      @media print {
+        @page { margin: 1.5cm; }
+        body { padding: 0; }
+        .page-wrap { padding: 0; }
+      }
+    </style>
+  </head><body>
+  <div class="page-wrap">
+    <div class="doc-header">
+      <img src="https://www.rossanacal.it/wp-content/uploads/2024/02/logo-rossana-v2-2.jpg" alt="Studio Rossana Cal">
+      <div class="doc-header-right">
+        <div class="doc-title">Percorso di sviluppo — Erika</div>
+        <div class="doc-date">${today}</div>
+      </div>
+    </div>
+    <div class="page-content">${body}</div>
+    <div class="doc-footer">
+      <div class="doc-footer-confidential">Documento riservato — uso esclusivo nell'ambito del percorso di coaching</div>
+      <div class="doc-footer-studio">Studio Rossana Elena Cal · rossanacal.it</div>
+    </div>
+  </div>
+  </body></html>`);
+  w.document.close();
+  w.focus();
+  setTimeout(() => { w.print(); }, 700);
+}
+
+document.getElementById('printOverlay').addEventListener('click', function(e) {
+  if (e.target === this) closePrintOverlay();
+});
+
+
+function fmtDate(d) {
+  if (!d) return '';
+  const mm = ['gen','feb','mar','apr','mag','giu','lug','ago','set','ott','nov','dic'];
+  const parts = d.split('-');
+  return `${parseInt(parts[2])} ${mm[parseInt(parts[1])-1]} ${parts[0]}`;
+}
+function showOk(id) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.style.display = 'inline';
+  setTimeout(() => el.style.display = 'none', 2500);
+}
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+// click outside modal to close
+['roleModal','addSessionModal'].forEach(id => {
+  document.getElementById(id).addEventListener('click', function(e) {
+    if (e.target === this) closeModal(id);
+  });
+});
+
+// DOWNLOAD
+function downloadFile() {
+  const html = document.documentElement.outerHTML;
+  const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'coaching_erika.html';
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(url), 2000);
+}
+
+// INIT
+function init() {
+  load();
+  if (S.role) setRole(S.role);
+  renderTimeline();
+  renderSessions();
+  loadFocus();
+  loadSessionFields();
+  renderSignals();
+  renderPhrases();
+  loadTask();
+  renderIndicatorEditor();
+  renderErikaStars();
+  renderTools();
+  renderArchive();
+  // default archive date to today
+  const today = new Date().toISOString().split('T')[0];
+  document.getElementById('archiveDate').value = today;
+  // first visit: show role modal
+  if (!S.role) setTimeout(openRoleModal, 700);
+}
+
+init();
+</script>
+</body>
+</html>
